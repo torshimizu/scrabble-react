@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import LETTERS from './Letters'
 
-class Scoring extends Component {
+class Scoring {
   checkForValidWord(word) {
     let downWord = word.toLowerCase()
 
     if (!downWord.match(/^[a-z]+$/) || downWord.length > 7 || downWord.length < 1) {
-      throw "Invalid Word";
+      throw new Error("Invalid Word");
     } else {
       return downWord;
     }
@@ -17,10 +17,10 @@ class Scoring extends Component {
     let total = 0;
 
     splitWord.forEach(function(letter) {
-      total += Scrabble.LETTERS[letter]['points'];
+      total += LETTERS[letter]['points'];
     });
 
-    if (splitWord.length == 7) {
+    if (splitWord.length === 7) {
       total += 50;
     }
 
@@ -43,7 +43,7 @@ class Scoring extends Component {
 
   highestScoreFrom(arrayOfWords) {
     if (arrayOfWords.length < 1) {
-      throw "Not enough words for comparison";
+      throw new Error ("Not enough words for comparison");
     }
 
     if (arrayOfWords.length === 1) {
@@ -54,22 +54,15 @@ class Scoring extends Component {
 
     arrayOfWords.forEach(function(word){
 
-      if (Scrabble.score(word) > Scrabble.score(highestWord)) {
+      if (this.score(word) > this.score(highestWord)) {
         highestWord = word;
-      } else if (Scrabble.score(word) === Scrabble.score(highestWord)) {
-        highestWord = Scrabble.breakTie(highestWord, word);
+      } else if (this.score(word) === this.score(highestWord)) {
+        highestWord = this.breakTie(highestWord, word);
       }
 
     });
 
     return highestWord;
-  }
-
-  render() {
-    return (
-      <div className="scoring">
-      </div>
-    );
   }
 }
 
