@@ -5,7 +5,7 @@ class BoardView extends React.Component {
   row = () => {
     let row = []
     for (let c = 0; c < 15; c += 1) {
-      row.push(<span className='cell' id={c + 1} key={c}> - </span>);
+      row.push(<span className='cell' id={`cell${c + 1}`} key={c}> </span>);
     }
     return row;
   }
@@ -13,7 +13,7 @@ class BoardView extends React.Component {
   render () {
     let board = []
     for (let r = 0; r < 15; r += 1) {
-      board.push(<div className='row' id={r + 1}  key={r}>{this.row()}</div>);
+      board.push(<div className='row' id={`row${r + 1}`}  key={r}>{this.row()}</div>);
     }
 
     return (
