@@ -1,8 +1,12 @@
+import React from 'react';
 import Scoring from './Scoring';
 
-class Player {
+class Player extends React.Component {
   constructor() {
-    this.plays = [];
+    super();
+    this.state = {
+      plays: []
+    }
   }
 
   totalScore() {

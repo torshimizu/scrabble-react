@@ -4,25 +4,31 @@ import Player from './components/Player';
 import TileBag from './components/TileBag';
 import './App.css';
 
-Array.prototype.shuffle = function arrayShuffle() {
-  for (let i = this.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [this[i], this[j]] = [this[j], this[i]];
-  }
-  return this;
-}
+
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      player1: new Player(),
-      player2: new Player(),
-      tiles: new TileBag()
+      allTiles: new TileBag(),
+      player1: {
+        plays: new Player(),
+        currentTiles: null
+      },
+      player2: {
+        plays: new Player(),
+        currentTiles: null
+      },
     }
   }
 
+  getTiles = (num) => {
+    let playerTiles = this.state.allTiles.drawTiles(num);
+    this.setState({player1: {currentTiles: playerTiles}});
+  }
+
   render() {
+    console.log(this.state.allTiles);
     return (
       <div className="App">
         <h1>Let's Play Scrabble!</h1>

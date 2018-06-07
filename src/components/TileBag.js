@@ -1,5 +1,12 @@
 import LETTERS from './Letters'
 
+Array.prototype.shuffle = function arrayShuffle() {
+  for (let i = this.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [this[i], this[j]] = [this[j], this[i]];
+  }
+  return this;
+}
 
 class TileBag {
   constructor() {
@@ -15,7 +22,7 @@ class TileBag {
       }
     });
 
-    return availableLetters;
+    return availableLetters.shuffle();
   }
 
   drawTiles = (num) => {
@@ -29,26 +36,16 @@ class TileBag {
       throw new Error('Not enough tiles');
     }
 
+
     let tiles = [];
-    // let that = this;
-
     for (let i = 0; i < num; i += 1) {
-      let randIndex = Math.floor(Math.random() * this.tiles.length);
+      // let randIndex = Math.floor(Math.random() * this.tiles.length);
 
-      tiles.push(this.tiles.splice(randIndex, 1));
+      tiles.push(this.tiles.pop());
     }
 
     return tiles;
   }
-  // render() {
-  //   return (
-  //     <div className="tile">
-  //       {this.drawTiles(7).map((letter, index) => {
-  //         return <p key={index}>{letter}</p>
-  //       })}
-  //     </div>
-  //   );
-  // }
 }
 
 export default TileBag;
