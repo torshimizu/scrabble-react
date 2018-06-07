@@ -17,10 +17,17 @@ class App extends Component {
     super();
     this.state = {
       allTiles: this.makeArrayOfAllLetters(),
-      player1: new Player(),
-      player1Tiles: null,
-      player2: new Player(),
-      player2Tiles: null
+      player1: {
+        player: new Player(),
+        currentTiles: null,
+        name: "Player One"
+      },
+      player2: {
+        player: new Player(),
+        currentTiles: null,
+        name: "Player Two"
+      },
+      player1Current: true
     }
   }
 
@@ -55,17 +62,38 @@ class App extends Component {
     return tiles;
   }
 
+  // I thought this just runs once??
   componentDidMount = () => {
-    this.setState({player1Tiles: this.drawTiles(7)});
-    this.setState({player2Tiles: this.drawTiles(7)});
+    this.setState({
+      player1: {
+        player: this.state.player1.player,
+        currentTiles: this.drawTiles(7),
+        name: this.state.player1.name
+      },
+      player2: {
+        player: this.state.player2.player,
+        currentTiles: this.drawTiles(7),
+        name: this.state.player2.name
+      }
+    });
   }
 
   render() {
     console.log(this.state);
+    let currentPlayer = this.state.player1
+    if (!this.state.player1Current) {
+      currentPlayer = this.state.player2;
+    }
+
     return (
       <div className="App">
         <h1>Let's Play Scrabble!</h1>
         <BoardView />
+        <div>
+          Current Player: { currentPlayer.name }
+          <p>Tiles: {currentPlayer.currentTiles}</p>
+
+        </div>
       </div>
     );
   }
