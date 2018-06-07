@@ -1,7 +1,7 @@
 import React from 'react';
 
 class BoardView extends React.Component {
-  constructor(props) {
+  constructor() {
     super();
     this.state = {
       board: this.createAllRows()

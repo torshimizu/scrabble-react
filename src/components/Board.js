@@ -3,8 +3,8 @@ class Board {
 
   }
 
-  replaceTiles = (row, column) => {
-    
+  replaceTiles = () => {
+
   }
 }
 
