@@ -66,6 +66,7 @@ class App extends Component {
   componentDidMount = () => {
     this.setState({
       player1: {
+        // how do I just change the currentTiles?
         player: this.state.player1.player,
         currentTiles: this.drawTiles(7),
         name: this.state.player1.name
@@ -78,6 +79,10 @@ class App extends Component {
     });
   }
 
+  testMethod = (event) => {
+    console.log(event.target);
+  }
+
   render() {
     console.log(this.state);
     let currentPlayer = this.state.player1
@@ -88,10 +93,11 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Let's Play Scrabble!</h1>
-        <BoardView />
+        <BoardView doSomething={this.testMethod}/>
         <div>
           Current Player: { currentPlayer.name }
-          <p>Tiles: {currentPlayer.currentTiles}</p>
+          <div> Tiles: {currentPlayer.currentTiles}
+          </div>
 
         </div>
       </div>
