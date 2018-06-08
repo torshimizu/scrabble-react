@@ -12,74 +12,83 @@ Array.prototype.shuffle = function arrayShuffle() {
   return this;
 }
 
+const makeArrayOfAllLetters = () => {
+  let availableLetters = []
+
+  Object.keys(LETTERS).forEach((letter) => {
+    for (let i = 0; i < LETTERS[letter]['tiles']; i += 1) {
+      availableLetters.push(letter);
+    }
+  });
+
+  return availableLetters.shuffle();
+}
+
 class App extends Component {
+
   constructor() {
     super();
+
+    const allTiles = makeArrayOfAllLetters();
+    allTiles.shuffle();
+    const p1Tiles = this.drawTiles(allTiles, 7);
+    const p2Tiles = this.drawTiles(allTiles, 7);
+
     this.state = {
-      allTiles: this.makeArrayOfAllLetters(),
+      allTiles: allTiles,
       player1: {
         player: new Player(),
-        currentTiles: null,
+        currentTiles: p1Tiles,
         name: "Player One"
       },
       player2: {
         player: new Player(),
-        currentTiles: null,
+        currentTiles: p2Tiles,
         name: "Player Two"
       },
       player1Current: true
     }
   }
 
-  makeArrayOfAllLetters() {
-    let availableLetters = []
 
-    Object.keys(LETTERS).forEach((letter) => {
-      for (let i = 0; i < LETTERS[letter]['tiles']; i += 1) {
-        availableLetters.push(letter);
-      }
-    });
-
-    return availableLetters.shuffle();
-  }
-
-  drawTiles = (num) => {
+  drawTiles = (allTiles, num) => {
     const maxTiles = 7;
 
     if (num > maxTiles) {
       throw new Error('Too many tiles requested');
     }
 
-    if (num > this.state.allTiles.length) {
+    if (num > allTiles.length) {
       throw new Error('Not enough tiles');
     }
 
     let tiles = [];
     for (let i = 0; i < num; i += 1) {
-      tiles.push(this.state.allTiles.pop());
+      tiles.push(allTiles.pop());
     }
 
     return tiles;
   }
 
   // I thought this just runs once??
-  componentDidMount = () => {
-    this.setState({
-      player1: {
-        // how do I just change the currentTiles?
-        player: this.state.player1.player,
-        currentTiles: this.drawTiles(7),
-        name: this.state.player1.name
-      },
-      player2: {
-        player: this.state.player2.player,
-        currentTiles: this.drawTiles(7),
-        name: this.state.player2.name
-      }
-    });
-  }
+  // componentDidMount = () => {
+  //   this.setState({
+  //     player1: {
+  //       // how do I just change the currentTiles?
+  //       player: this.state.player1.player,
+  //       currentTiles: this.drawTiles(7),
+  //       name: this.state.player1.name
+  //     },
+  //     player2: {
+  //       player: this.state.player2.player,
+  //       currentTiles: this.drawTiles(7),
+  //       name: this.state.player2.name
+  //     }
+  //   });
+  // }
 
   testMethod = (event) => {
+    console.log(event.currentTarget);
     console.log(event.target);
   }
 
@@ -96,7 +105,9 @@ class App extends Component {
         <BoardView doSomething={this.testMethod}/>
         <div>
           Current Player: { currentPlayer.name }
-          <div> Tiles: {currentPlayer.currentTiles}
+          <div> Tiles: {currentPlayer.currentTiles.map((tile, index) => {
+              return <span className='cell' key={index}>{tile}</span>
+            })}
           </div>
 
         </div>
