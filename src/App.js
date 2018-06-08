@@ -46,7 +46,9 @@ class App extends Component {
         currentTiles: p2Tiles,
         name: "Player Two"
       },
-      player1Current: true
+      player1Current: true,
+      currentInPlayTile: null,
+      inPlayTileIndex: null
     }
   }
 
@@ -70,30 +72,37 @@ class App extends Component {
     return tiles;
   }
 
-  // I thought this just runs once??
-  // componentDidMount = () => {
-  //   this.setState({
-  //     player1: {
-  //       // how do I just change the currentTiles?
-  //       player: this.state.player1.player,
-  //       currentTiles: this.drawTiles(7),
-  //       name: this.state.player1.name
-  //     },
-  //     player2: {
-  //       player: this.state.player2.player,
-  //       currentTiles: this.drawTiles(7),
-  //       name: this.state.player2.name
-  //     }
-  //   });
-  // }
+  cellClickHandler = (event) => {
+    if (this.state.currentInPlayTile) {
+      let cellPosition = [];
+      let currentRow = event.currentTarget.id;
+      let currentColumn = event.target.id;
 
-  testMethod = (event) => {
-    console.log(event.currentTarget);
-    console.log(event.target);
+      cellPosition.push(currentRow.replace('row', ''));
+      cellPosition.push(currentColumn.replace('cell', ''));
+
+      console.log(cellPosition);
+
+      console.log(`need to update the board with ${this.state.currentInPlayTile}`);
+    }
+  }
+
+  onPlayerTileClick = (event) => {
+    if (event.target.id === this.state.inPlayTileIndex) {
+      this.setState({
+        currentInPlayTile: null,
+        inPlayTileIndex: null
+      });
+    } else {
+      this.setState({
+        currentInPlayTile: event.target.innerText,
+        inPlayTileIndex: event.target.id
+      });
+    }
+
   }
 
   render() {
-    console.log(this.state);
     let currentPlayer = this.state.player1
     if (!this.state.player1Current) {
       currentPlayer = this.state.player2;
@@ -101,12 +110,12 @@ class App extends Component {
 
     return (
       <div className="App">
-        <h1>Let's Play Scrabble!</h1>
-        <BoardView doSomething={this.testMethod}/>
+        <h1>Let&#39;s Play Scrabble!</h1>
+        <BoardView boardCellClick={this.cellClickHandler}/>
         <div>
-          Current Player: { currentPlayer.name }
+          { currentPlayer.name }
           <div> Tiles: {currentPlayer.currentTiles.map((tile, index) => {
-              return <span className='cell' key={index}>{tile}</span>
+              return <span className='cell' key={index} id={index} onClick={this.onPlayerTileClick}>{tile}</span>
             })}
           </div>
 

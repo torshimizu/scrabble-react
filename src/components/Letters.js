@@ -25,7 +25,7 @@ const LETTERS = {
   "x": { "points":  8, "tiles":  1 },
   "y": { "points":  4, "tiles":  2 },
   "z": { "points": 10, "tiles":  1 },
-  "blank": { "tiles": 2}
+  "bl": { "tiles": 2}
 }
 
 export default LETTERS;

@@ -2,11 +2,12 @@ import React from 'react';
 
 class BoardView extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       board: this.createAllRows(props)
     }
   }
+
   createOneRow = () => {
     let row = []
     for (let c = 0; c < 15; c += 1) {
@@ -19,7 +20,7 @@ class BoardView extends React.Component {
     let board = []
     for (let r = 0; r < 15; r += 1) {
       board.push(
-        <div className='row' id={`row${r + 1}`}  key={r} onClick={props.doSomething}>{this.createOneRow()}</div>
+        <div className='row' id={`row${r + 1}`}  key={r} onClick={props.boardCellClick}>{this.createOneRow()}</div>
       );
     }
     return board;
