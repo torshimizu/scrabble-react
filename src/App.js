@@ -73,42 +73,8 @@ class App extends Component {
     return tiles;
   }
 
-  // places the tile on the board
-  cellClickHandler = (event) => {
-    if (this.state.currentInPlayTile) {
-      let cellPosition = [];
-      let currentRow = event.currentTarget.id;
-      let currentColumn = event.target.id;
-
-      cellPosition.push(currentRow);
-      cellPosition.push(currentColumn);
-      let row = [...document.getElementById(currentRow).childNodes];
-      let cell = row.filter((c) => {
-        return c.id === currentColumn
-      });
-      // replace the text inside the selected cell
-      cell[0].innerHTML = this.state.currentInPlayTile;
-
-      // once tile is played, should remove the tile from the player's displayed tiles but not from players currentTiles in state
-      // if you remove the tile from player's tiles how will you be able to put them back if they want to undo the word? How to distinguish their tiles from previously played tiles?
-      this.removePlayedTileFromPlayer();
-
-      // what should happen if the player wants to undo the play on the board?
-    }
-  }
-
-  removePlayedTileFromPlayer = () => {
-    let currentPlayer = null;
-    currentPlayer = this.state.player1Current ? "player1" : "player2";
-    let updatedTiles = this.state[currentPlayer].currentTiles.splice(this.state.inPlayTileIndex, 1, ' ');
-
-    this.setState({
-      currentPlayer: {
-        player: this.state[currentPlayer].player,
-        currentTiles: updatedTiles,
-        name: this.state[currentPlayer].name
-      }
-    });
+  getCurrentPlayer = () => {
+    return this.state.player1Current ? "player1" : "player2";
   }
 
   // staging tile for placing on the board
@@ -125,12 +91,74 @@ class App extends Component {
         inPlayTileIndex: event.target.id
       });
     }
+
+    // need to highlight the selected letter tile somehow
   }
+
+  // places the tile on the board
+  cellClickHandler = (event) => {
+    if (this.state.currentInPlayTile) {
+      let currentRow = event.currentTarget.id;
+      let currentColumn = event.target.id;
+      // let cellPosition = [];
+      // cellPosition.push(currentRow);
+      // cellPosition.push(currentColumn);
+      let row = [...document.getElementById(currentRow).childNodes];
+      let cell = row.filter((c) => {
+        return c.id === currentColumn
+      });
+      // replace the text inside the selected cell on board
+      cell[0].innerHTML = this.state.currentInPlayTile;
+
+      // add tile to turnTiles
+      let updatedTurnTiles = this.state.turnTiles;
+      updatedTurnTiles.push(this.state.currentInPlayTile);
+
+      this.setState({
+        turnTiles: updatedTurnTiles
+      })
+
+      // replace the text of the just played-player's tile to a blank
+      // once tile is played, should remove the tile from the player's displayed tiles but not from players currentTiles in state
+      this.replacePlayedLetterWithBlank();
+
+      // How to undo a played letter? How to distinguish their tiles from previously played tiles?
+    }
+  }
+  replacePlayedLetterWithBlank = () => {
+    const currentTileIndex = this.state.inPlayTileIndex;
+    const currentTiles = [...document.getElementById("player-tiles").childNodes];
+    let elementToReplace = currentTiles.filter((tile) => {
+      return tile.id === currentTileIndex;
+    });
+
+    elementToReplace[0].innerHTML = " ";
+  }
+
+
+  // need to update this function to remove all played tiles once turn is finished
+  removePlayedTilesFromPlayer = () => {
+    let currentPlayer = this.getCurrentPlayer();
+    let updatedTiles = this.state[currentPlayer].currentTiles.splice(this.state.inPlayTileIndex, 1, ' ');
+
+    this.setState({
+      currentPlayer: {
+        player: this.state[currentPlayer].player,
+        currentTiles: updatedTiles,
+        name: this.state[currentPlayer].name
+      }
+    });
+  }
+
 
   finishTurnClick = (event) => {
     event.preventDefault;
-
-    this.setState({player1Current: !this.state.player1Current})
+    // need to add played word to currentPlayer.plays
+    console.log(this.state[this.getCurrentPlayer()].player.totalScore());
+    this.setState({
+      player1Current: !this.state.player1Current,
+      turnTiles: []
+    });
   }
 
   render() {
@@ -143,9 +171,10 @@ class App extends Component {
       <div className="App">
         <h1>Let&#39;s Play Scrabble!</h1>
         <BoardView boardCellClick={this.cellClickHandler} />
-        <div className="player-tiles">
+        <div className="player-info">
           { currentPlayer.name }
-          <div> Tiles: {currentPlayer.currentTiles.map((tile, index) => {
+          <p>Tiles:</p>
+          <div id="player-tiles"> {currentPlayer.currentTiles.map((tile, index) => {
               return <span className='cell' key={index} id={index} onClick={this.onPlayerTileClick}>{tile}</span>
             })}
           </div>
