@@ -11,7 +11,7 @@ class BoardView extends React.Component {
   createOneRow = () => {
     let row = []
     for (let c = 0; c < 15; c += 1) {
-      row.push(<span className='cell' id={`cell${c + 1}`} key={c}> </span>);
+      row.push(<span className='cell' id={`cell${c + 1}`} key={c}> &nbsp;</span>);
     }
     return row;
   }

@@ -48,7 +48,8 @@ class App extends Component {
       },
       player1Current: true,
       currentInPlayTile: null,
-      inPlayTileIndex: null
+      inPlayTileIndex: null,
+      turnTiles: []
     }
   }
 
@@ -72,21 +73,46 @@ class App extends Component {
     return tiles;
   }
 
+  // places the tile on the board
   cellClickHandler = (event) => {
     if (this.state.currentInPlayTile) {
       let cellPosition = [];
       let currentRow = event.currentTarget.id;
       let currentColumn = event.target.id;
 
-      cellPosition.push(currentRow.replace('row', ''));
-      cellPosition.push(currentColumn.replace('cell', ''));
+      cellPosition.push(currentRow);
+      cellPosition.push(currentColumn);
+      let row = [...document.getElementById(currentRow).childNodes];
+      let cell = row.filter((c) => {
+        return c.id === currentColumn
+      });
+      // replace the text inside the selected cell
+      cell[0].innerHTML = this.state.currentInPlayTile;
 
-      console.log(cellPosition);
+      // once tile is played, should remove the tile from the player's displayed tiles but not from players currentTiles in state
+      // if you remove the tile from player's tiles how will you be able to put them back if they want to undo the word? How to distinguish their tiles from previously played tiles?
+      this.removePlayedTileFromPlayer();
 
-      console.log(`need to update the board with ${this.state.currentInPlayTile}`);
+      // what should happen if the player wants to undo the play on the board?
     }
   }
 
+  removePlayedTileFromPlayer = () => {
+    let currentPlayer = null;
+    currentPlayer = this.state.player1Current ? "player1" : "player2";
+    let updatedTiles = this.state[currentPlayer].currentTiles.splice(this.state.inPlayTileIndex, 1, ' ');
+
+    this.setState({
+      currentPlayer: {
+        player: this.state[currentPlayer].player,
+        currentTiles: updatedTiles,
+        name: this.state[currentPlayer].name
+      }
+    });
+  }
+
+  // staging tile for placing on the board
+  // will unstage the tile if the same tile is clicked
   onPlayerTileClick = (event) => {
     if (event.target.id === this.state.inPlayTileIndex) {
       this.setState({
@@ -99,7 +125,12 @@ class App extends Component {
         inPlayTileIndex: event.target.id
       });
     }
+  }
 
+  finishTurnClick = (event) => {
+    event.preventDefault;
+
+    this.setState({player1Current: !this.state.player1Current})
   }
 
   render() {
@@ -111,13 +142,14 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Let&#39;s Play Scrabble!</h1>
-        <BoardView boardCellClick={this.cellClickHandler}/>
-        <div>
+        <BoardView boardCellClick={this.cellClickHandler} />
+        <div className="player-tiles">
           { currentPlayer.name }
           <div> Tiles: {currentPlayer.currentTiles.map((tile, index) => {
               return <span className='cell' key={index} id={index} onClick={this.onPlayerTileClick}>{tile}</span>
             })}
           </div>
+          <button onClick={this.finishTurnClick}>Finish Turn</button>
 
         </div>
       </div>
