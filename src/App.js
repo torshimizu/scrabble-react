@@ -104,7 +104,10 @@ class App extends Component {
     });
 
     // deleting the element altogether
-    elementToReplace[0].outerHTML = "";
+    // can't delete the element because the next player's tiles will be affected since element does not rerender
+    // elementToReplace[0].outerHTML = "";
+    elementToReplace[0].classList.remove("selected-letter");
+    elementToReplace[0].innerHTML = "&nbsp;";
   }
 
 
@@ -143,6 +146,7 @@ class App extends Component {
       let currPlayer = this.getCurrentPlayer();
       let updatedCurrPlayerTiles = this.state[currPlayer].currentTiles;
       let currentLetter = event.target.innerText;
+
       // add tile back to player's current tiles
       updatedCurrPlayerTiles.push(currentLetter);
 
