@@ -99,29 +99,30 @@ class App extends Component {
   removeLetterFromCurrTiles = () => {
     const currentTileIndex = this.state.inPlayTileIndex;
     const currentTiles = [...document.getElementById("player-tiles").childNodes];
-    let elementToReplace = currentTiles.filter((tile) => {
+    let elementToReplace = currentTiles.find((tile) => {
       return tile.id === currentTileIndex;
     });
 
     // deleting the element altogether
     // can't delete the element because the next player's tiles will be affected since element does not rerender
     // elementToReplace[0].outerHTML = "";
-    elementToReplace[0].classList.remove("selected-letter");
-    elementToReplace[0].innerHTML = "&nbsp;";
+    elementToReplace.classList.remove("selected-letter");
+    elementToReplace.classList.add("placed-letter");
+    // elementToReplace[0].innerHTML = "&nbsp;";
   }
 
 
   // places the tile on the board
   cellClickHandler = (event) => {
-    if (this.state.currentInPlayTile) {
+    if (this.state.currentInPlayTile && event.target.innerHTML == "&nbsp;") {
       let currentRow = event.currentTarget.id;
       let currentColumn = event.target.id;
       let row = [...document.getElementById(currentRow).childNodes];
-      let cell = row.filter((c) => {
+      let cell = row.find((c) => {
         return c.id === currentColumn;
       });
       // replace the text inside the selected cell on board
-      cell[0].innerHTML = this.state.currentInPlayTile;
+      cell.innerHTML = this.state.currentInPlayTile;
 
       // add tile to turnTiles
       let updatedTurnTiles = this.state.turnTiles;
@@ -143,12 +144,16 @@ class App extends Component {
 
     } else if (this.checkIfLetterInCurrPlayersCurrTurn(event)) {
 
-      let currPlayer = this.getCurrentPlayer();
-      let updatedCurrPlayerTiles = this.state[currPlayer].currentTiles;
+      // let currPlayer = this.getCurrentPlayer();
+      // let updatedCurrPlayerTiles = this.state[currPlayer].currentTiles;
       let currentLetter = event.target.innerText;
 
       // add tile back to player's current tiles
-      updatedCurrPlayerTiles.push(currentLetter);
+      let hiddenTiles = Array.from(document.getElementsByClassName("placed-letter"));
+      let targetTile = hiddenTiles.find((tile) => {
+        return tile.innerText === event.target.innerText;
+      });
+      targetTile.classList.remove("placed-letter");
 
       // creating a turnTiles array without the letter
       let updatedTurnTiles = this.state.turnTiles;

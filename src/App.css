@@ -22,3 +22,7 @@
 .selected-letter {
   background-color: rgba(28, 227, 107, 0.3);
 }
+
+.placed-letter {
+  display: none;
+}
