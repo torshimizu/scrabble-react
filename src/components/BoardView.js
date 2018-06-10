@@ -20,7 +20,14 @@ class BoardView extends React.Component {
     let board = []
     for (let r = 0; r < 15; r += 1) {
       board.push(
-        <div className='row' id={`row${r + 1}`}  key={r} onClick={props.boardCellClick}>{this.createOneRow()}</div>
+        <div
+          key={r}
+          className='row'
+          id={`row${r + 1}`}
+          onClick={props.boardCellClick}
+          >
+          {this.createOneRow()}
+        </div>
       );
     }
     return board;

@@ -49,6 +49,7 @@ class App extends Component {
       player1Current: true,
       currentInPlayTile: null,
       inPlayTileIndex: null,
+      // maybe turnTiles should hold the position of the board placement for the letter also?
       turnTiles: []
     }
   }
@@ -96,34 +97,6 @@ class App extends Component {
 
   }
 
-  // places the tile on the board
-  cellClickHandler = (event) => {
-    if (this.state.currentInPlayTile) {
-      let currentRow = event.currentTarget.id;
-      let currentColumn = event.target.id;
-      let row = [...document.getElementById(currentRow).childNodes];
-      let cell = row.filter((c) => {
-        return c.id === currentColumn
-      });
-      // replace the text inside the selected cell on board
-      cell[0].innerHTML = this.state.currentInPlayTile;
-
-      // add tile to turnTiles
-      let updatedTurnTiles = this.state.turnTiles;
-      updatedTurnTiles.push(this.state.currentInPlayTile);
-
-      this.setState({
-        turnTiles: updatedTurnTiles
-      })
-
-      // replace the text of the just played-player's tile to a blank
-      // once tile is played, should remove the tile from the player's displayed tiles but not from players currentTiles in state
-      this.replacePlayedLetterWithBlank();
-
-      // How to undo a played letter? How to distinguish their tiles from previously played tiles?
-    }
-  }
-
   replacePlayedLetterWithBlank = () => {
     const currentTileIndex = this.state.inPlayTileIndex;
     const currentTiles = [...document.getElementById("player-tiles").childNodes];
@@ -132,8 +105,69 @@ class App extends Component {
     });
 
     elementToReplace[0].classList.remove("selected-letter");
-    elementToReplace[0].innerHTML = " ";
+    elementToReplace[0].innerHTML = "&nbsp;";
   }
+
+
+  // places the tile on the board
+  cellClickHandler = (event) => {
+    if (this.state.currentInPlayTile) {
+      let currentRow = event.currentTarget.id;
+      let currentColumn = event.target.id;
+      let row = [...document.getElementById(currentRow).childNodes];
+      let cell = row.filter((c) => {
+        return c.id === currentColumn;
+      });
+      // replace the text inside the selected cell on board
+      cell[0].innerHTML = this.state.currentInPlayTile;
+
+      // add tile to turnTiles
+      let updatedTurnTiles = this.state.turnTiles;
+      let turnTile = {
+        row: currentRow,
+        column: currentColumn,
+        letter: this.state.currentInPlayTile
+      };
+      updatedTurnTiles.push(turnTile);
+
+      this.setState({
+        turnTiles: updatedTurnTiles,
+        currentInPlayTile: null,
+        inPlayTileIndex: null,
+      })
+
+      // replace the text of the just played-player's tile to a blank removes the tile from the player's displayed tiles but not from players currentTiles in state
+      this.replacePlayedLetterWithBlank();
+    } else if (this.checkIfLetterInCurrPlayersCurrTurn(event)) {
+      // TODO: this adds to the player's current unplayed tiles but there is still the tile with the space left over from before
+
+      let currPlayer = this.getCurrentPlayer();
+      let updatedCurrPlayerTiles = this.state[currPlayer].currentTiles;
+      let currentLetter = event.target.innerText;
+      // add tile back to player's current tiles
+      updatedCurrPlayerTiles.push(currentLetter);
+
+      // creating a turnTiles array without the letter
+      let updatedTurnTiles = this.state.turnTiles;
+      updatedTurnTiles.splice( updatedTurnTiles.indexOf(currentLetter), 1 );
+
+      // remove tiles from state turnTiles
+      this.setState({
+        turnTiles: updatedTurnTiles,
+      });
+
+    }
+  }
+
+  checkIfLetterInCurrPlayersCurrTurn = (event) => {
+    let matchedTurnPlay = this.state.turnTiles.filter((play) => {
+      return play.row === event.currentTarget.id &&
+       play.column === event.target.id &&
+       play.letter === event.target.innerText;
+    })
+    return matchedTurnPlay.length !== 0;
+  }
+
 
 
   // need to update this function to remove all played tiles once turn is finished
