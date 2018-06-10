@@ -96,7 +96,7 @@ class App extends Component {
 
   }
 
-  replacePlayedLetterWithBlank = () => {
+  removeLetterFromCurrTiles = () => {
     const currentTileIndex = this.state.inPlayTileIndex;
     const currentTiles = [...document.getElementById("player-tiles").childNodes];
     let elementToReplace = currentTiles.filter((tile) => {
@@ -138,7 +138,7 @@ class App extends Component {
       })
 
       // replace the text of the just played-player's tile to a blank removes the tile from the player's displayed tiles but not from players currentTiles in state
-      this.replacePlayedLetterWithBlank();
+      this.removeLetterFromCurrTiles();
 
     } else if (this.checkIfLetterInCurrPlayersCurrTurn(event)) {
 
