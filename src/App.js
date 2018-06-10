@@ -198,6 +198,7 @@ class App extends Component {
   finishTurnClick = (event) => {
     event.preventDefault;
     // need to add played word to currentPlayer.plays
+    // need to remove all played tiles from player's current tiles
     console.log(this.state[this.getCurrentPlayer()].player.totalScore());
     this.setState({
       player1Current: !this.state.player1Current,
