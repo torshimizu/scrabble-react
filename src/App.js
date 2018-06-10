@@ -81,18 +81,19 @@ class App extends Component {
   // will unstage the tile if the same tile is clicked
   onPlayerTileClick = (event) => {
     if (event.target.id === this.state.inPlayTileIndex) {
+      event.target.classList.remove("selected-letter");
       this.setState({
         currentInPlayTile: null,
         inPlayTileIndex: null
       });
     } else {
+      event.target.classList.add("selected-letter");
       this.setState({
         currentInPlayTile: event.target.innerText,
         inPlayTileIndex: event.target.id
       });
     }
 
-    // need to highlight the selected letter tile somehow
   }
 
   // places the tile on the board
@@ -100,9 +101,6 @@ class App extends Component {
     if (this.state.currentInPlayTile) {
       let currentRow = event.currentTarget.id;
       let currentColumn = event.target.id;
-      // let cellPosition = [];
-      // cellPosition.push(currentRow);
-      // cellPosition.push(currentColumn);
       let row = [...document.getElementById(currentRow).childNodes];
       let cell = row.filter((c) => {
         return c.id === currentColumn
@@ -125,6 +123,7 @@ class App extends Component {
       // How to undo a played letter? How to distinguish their tiles from previously played tiles?
     }
   }
+
   replacePlayedLetterWithBlank = () => {
     const currentTileIndex = this.state.inPlayTileIndex;
     const currentTiles = [...document.getElementById("player-tiles").childNodes];
@@ -132,6 +131,7 @@ class App extends Component {
       return tile.id === currentTileIndex;
     });
 
+    elementToReplace[0].classList.remove("selected-letter");
     elementToReplace[0].innerHTML = " ";
   }
 
