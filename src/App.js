@@ -49,8 +49,7 @@ class App extends Component {
       player1Current: true,
       currentInPlayTile: null,
       inPlayTileIndex: null,
-      // maybe turnTiles should hold the position of the board placement for the letter also?
-      turnTiles: []
+      turnTiles: [] // object of letter, row, column of board placement
     }
   }
 
@@ -105,7 +104,9 @@ class App extends Component {
     });
 
     elementToReplace[0].classList.remove("selected-letter");
-    elementToReplace[0].innerHTML = "&nbsp;";
+    // TODO: instead of replacing with a space, I want to delete this element altogether
+    // elementToReplace[0].innerHTML = "&nbsp;";
+    elementToReplace[0].outerHTML = "";
   }
 
 
@@ -138,8 +139,8 @@ class App extends Component {
 
       // replace the text of the just played-player's tile to a blank removes the tile from the player's displayed tiles but not from players currentTiles in state
       this.replacePlayedLetterWithBlank();
+
     } else if (this.checkIfLetterInCurrPlayersCurrTurn(event)) {
-      // TODO: this adds to the player's current unplayed tiles but there is still the tile with the space left over from before
 
       let currPlayer = this.getCurrentPlayer();
       let updatedCurrPlayerTiles = this.state[currPlayer].currentTiles;
@@ -156,6 +157,8 @@ class App extends Component {
         turnTiles: updatedTurnTiles,
       });
 
+      // make board cell blank
+      event.target.innerHTML = "&nbsp;";
     }
   }
 
