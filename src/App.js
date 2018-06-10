@@ -103,9 +103,7 @@ class App extends Component {
       return tile.id === currentTileIndex;
     });
 
-    elementToReplace[0].classList.remove("selected-letter");
-    // TODO: instead of replacing with a space, I want to delete this element altogether
-    // elementToReplace[0].innerHTML = "&nbsp;";
+    // deleting the element altogether
     elementToReplace[0].outerHTML = "";
   }
 
