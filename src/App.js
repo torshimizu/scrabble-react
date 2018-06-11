@@ -237,19 +237,37 @@ class App extends Component {
     }
   }
 
-  finishTurnClick = (event) => {
-    event.preventDefault();
-    // need to add played word to currentPlayer.plays
+  makeWordFromTiles = () => {
     let wordArray = this.orderLetters();
-    let word = wordArray.map((wordObj) => {
+    return wordArray.map((wordObj) => {
       return wordObj.letter;
     }).join('');
+  }
+
+  finishTurnClick = (event) => {
+    event.preventDefault();
+    // add played word to currentPlayer.plays
+    let word = this.makeWordFromTiles();
     let currentPlayer = this.state[this.getCurrentPlayer()];
     currentPlayer.player.play(word);
-    console.log(currentPlayer.player.totalScore());
-
 
     // need to remove all played tiles from player's current tiles
+    let playerTiles = Array.from(this.state[this.getCurrentPlayer()].currentTiles);
+    let turnLetters = this.state.turnTiles.map((tile) => {
+      return tile.letter;
+    })
+
+    // loop over turnTiles, if found in playerTiles, don't add it to new array?
+    let updatedPlayerTiles = []
+    // this does not take care of duplicate letters that are not used
+    playerTiles.forEach((tile) => {
+      if (turnLetters.indexOf(tile) === -1 ) {
+        updatedPlayerTiles.push(tile);
+      }
+    });
+
+    console.log(updatedPlayerTiles);
+
     // make all active tiles inactive
     let updatedBoard = this.state.board;
     this.state.turnTiles.forEach((tile) => {
