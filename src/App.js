@@ -123,6 +123,7 @@ class App extends Component {
       });
       // replace the text inside the selected cell on board
       cell.innerHTML = this.state.currentInPlayTile;
+      cell.classList.add('active');
 
       // add tile to turnTiles
       let updatedTurnTiles = this.state.turnTiles;
@@ -170,14 +171,15 @@ class App extends Component {
   }
 
   checkIfLetterInCurrPlayersCurrTurn = (event) => {
+    // need to check if the selected cell is active also
     let matchedTurnPlay = this.state.turnTiles.filter((play) => {
       return play.row === event.currentTarget.id &&
        play.column === event.target.id &&
        play.letter === event.target.innerText;
     })
+
     return matchedTurnPlay.length !== 0;
   }
-
 
 
   // need to update this function to remove all played tiles once turn is finished
@@ -200,6 +202,15 @@ class App extends Component {
     // need to add played word to currentPlayer.plays
     // need to remove all played tiles from player's current tiles
     console.log(this.state[this.getCurrentPlayer()].player.totalScore());
+
+    // make all active tiles inactive
+    let actives = Array.from(document.getElementsByClassName('active'));
+
+    actives.forEach((cell) => {
+      cell.classList.remove('active');
+      cell.classList.add('inactive');
+    })
+
     this.setState({
       player1Current: !this.state.player1Current,
       turnTiles: []
