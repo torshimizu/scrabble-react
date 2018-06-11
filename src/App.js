@@ -29,8 +29,7 @@ const createOneRow = () => {
   for (let c = 0; c < 15; c += 1) {
     row.push({
       active: false,
-      letter: null,
-      
+      letter: null
     });
   }
   return row;
@@ -39,9 +38,7 @@ const createOneRow = () => {
 const createAllRows = () => {
   let board = []
   for (let r = 0; r < 15; r += 1) {
-    board.push(
-
-    );
+    board.push(createOneRow());
   }
   return board;
 }
@@ -58,7 +55,7 @@ class App extends Component {
     const p2Tiles = this.drawTiles(allTiles, 7);
 
     this.state = {
-      board:
+      board: createAllRows(),
       allTiles: allTiles,
       player1: {
         player: new Player(),
@@ -250,7 +247,10 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Let&#39;s Play Scrabble!</h1>
-        <BoardView boardCellClick={this.cellClickHandler} />
+        <BoardView
+          boardCellClick={this.cellClickHandler}
+          board={this.state.board}
+          />
         <div className="player-info">
           { currentPlayer.name }
           <p>Tiles:</p>
