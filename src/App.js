@@ -135,7 +135,7 @@ class App extends Component {
 
   // places the tile on the board
   cellClickHandler = (event) => {
-    if (this.state.currentInPlayTile && event.target.innerHTML == "&nbsp;") {
+    if (this.state.currentInPlayTile && event.target.innerHTML === '&nbsp;') {
       let currentRow = event.currentTarget.id;
       let currentColumn = event.target.id;
       let row = [...document.getElementById(currentRow).childNodes];
@@ -219,7 +219,7 @@ class App extends Component {
 
 
   finishTurnClick = (event) => {
-    event.preventDefault;
+    event.preventDefault();
     // need to add played word to currentPlayer.plays
     // need to remove all played tiles from player's current tiles
     console.log(this.state[this.getCurrentPlayer()].player.totalScore());

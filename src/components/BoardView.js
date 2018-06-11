@@ -7,46 +7,14 @@ class BoardView extends React.Component {
     boardCellClick: PropTypes.func
   }
 
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     board: this.createAllRows(props)
-  //   }
-  // }
-
-  // createOneRow = () => {
-  //   let row = []
-  //   for (let c = 0; c < 15; c += 1) {
-  //     row.push(<span className='cell' id={`cell${c + 1}`} key={c}>&nbsp;</span>);
-  //   }
-  //   return row;
-  // }
-  //
-  // createAllRows = (props) => {
-  //   let board = []
-  //   for (let r = 0; r < 15; r += 1) {
-  //     board.push(
-  //       <div
-  //         key={r}
-  //         className='row'
-  //         id={`row${r + 1}`}
-  //         onClick={props.boardCellClick}
-  //         >
-  //         {this.createOneRow()}
-  //       </div>
-  //     );
-  //   }
-  //   return board;
-  // }
-
   makeBoard = () => {
     let boardMatrix = this.props.board;
 
     let boardView = boardMatrix.map((row, index) => {
-      return (<div key={index} id={`row${index}`} className='row' onClick={this.props.boardCellClick}>
+      return (<div key={index} id={`row${index}`} className='row' onClick={this.cellClickHandler}>
         {
           row.map((cell, index) => {
-            return (<span key={index} id={`cell${index}`} className='cell'>{cell.letter}</span>)
+            return (<span key={index} id={`cell${index}`} className='cell'>{cell.letter}&nbsp;</span>)
           })
         }
 
@@ -54,6 +22,10 @@ class BoardView extends React.Component {
 
     })
     return boardView;
+  }
+
+  cellClickHandler = (event) => {
+    this.props.boardCellClick(event);
   }
 
   render () {
