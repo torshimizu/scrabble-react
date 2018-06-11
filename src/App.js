@@ -100,7 +100,8 @@ class App extends Component {
   }
 
   getCellRow = (event) => {
-    return event.currentTarget.id.replace('row', '');
+    let parentRow = event.target.parentElement.id;
+    return parentRow.replace('row', '');
   }
 
   getCellId = (event) => {
@@ -140,7 +141,10 @@ class App extends Component {
 
   // places the tile on the board
   cellClickHandler = (event) => {
-    if (this.state.currentInPlayTile && event.target.innerHTML.length === 0) {
+    // ensure that the click was on the SPAN
+    if (event.target.nodeName !== 'SPAN') {
+      return
+    } else if (this.state.currentInPlayTile && event.target.innerHTML.length === 0) {
       let currentRow = this.getCellRow(event);
       let currentColumn = this.getCellId(event);
       let updatedBoard = this.state.board
@@ -162,7 +166,7 @@ class App extends Component {
         inPlayTileIndex: null,
       })
 
-      // // replace the text of the just played-player's tile to a blank removes the tile from the player's displayed tiles but not from players currentTiles in state
+      // removing selected-letter class, adding placed-letter
       this.removeLetterFromCurrTiles();
 
     } else if (this.checkIfLetterInCurrPlayersCurrTurn(event)) {
