@@ -271,7 +271,11 @@ class App extends Component {
       updatedBoard[tile.row][tile.column].active = false;
     })
 
-    // TODO: update the classList of playerTiles to not have placed-letter
+    // update the classList of played playerTiles to not have placed-letter
+    let hiddenTiles = Array.from(document.getElementsByClassName("placed-letter"));
+    hiddenTiles.forEach((tile) => {
+      tile.classList.remove("placed-letter");
+    });
 
     // update state
     let newState = {
@@ -283,7 +287,6 @@ class App extends Component {
     let playerObj = {...this.state[this.getCurrentPlayer()]};
     playerObj.currentTiles = updatedPlayerTiles;
     newState[this.getCurrentPlayer()] = playerObj;
-    console.log(newState);
 
     this.setState(newState);
   }
