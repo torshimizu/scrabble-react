@@ -305,6 +305,11 @@ class App extends Component {
           boardCellClick={this.cellClickHandler}
           board={this.state.board}
         />
+      <div className='player-info'>
+          <h3>{this.state[currentPlayer].name}</h3>
+          <p>Current Score: {this.state[currentPlayer].player.totalScore()}</p>
+
+        </div>
         <PlayerTiles
           tiles={this.state[currentPlayer]['currentTiles']}
           finishButtonClick={this.finishTurnClick}

@@ -1,10 +1,31 @@
 .App {
   text-align: center;
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  grid-template-rows: 10vh 4fr 2fr;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.App > h1 {
+  grid-row-start: 1;
+  grid-column: 1 / span 2;
+  text-align: left;
+  margin-left: 15vw;
+}
+
+.board-view {
+  width: fit-content;
+  margin: auto;
+  grid-row-start: 2;
+}
+
+.in-play-tiles {
+  grid-row-start: 3;
+  grid-column: 1;
+}
+
+.player-info {
+  /*margin-right: 10vw;*/
+  text-align: left;
 }
 
 .cell {
