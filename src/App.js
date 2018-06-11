@@ -246,7 +246,7 @@ class App extends Component {
     }).join('');
     let currentPlayer = this.state[this.getCurrentPlayer()];
     currentPlayer.player.play(word);
-    console.log(currentPlayer.player.plays);
+    console.log(currentPlayer.player.totalScore());
 
 
     // need to remove all played tiles from player's current tiles

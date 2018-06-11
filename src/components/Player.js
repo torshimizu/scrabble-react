@@ -1,36 +1,28 @@
 import Scoring from './Scoring';
-const checkForValidWord = (word) => {
-  let downWord = word.toLowerCase()
-
-  if (!downWord.match(/^[a-z]+$/) || downWord.length > 7 || downWord.length < 1) {
-    throw new Error("Invalid Word");
-  } else {
-    return downWord;
-  }
-}
 
 class Player {
   constructor() {
     this.plays = []
+    this.scorer = new Scoring()
   }
 
-  totalScore() {
+  totalScore = () => {
     let total = 0;
-    this.plays.forEach(function(word) {
-      total += Scoring.score(word);
+    this.plays.forEach((word) => {
+      total += this.scorer.score(word);
     });
 
     return total;
   }
 
-  hasWon() {
+  hasWon = () => {
     let total = this.totalScore();
 
     return total >= 100;
   }
 
-  play(word) {
-    let checkedWord = checkForValidWord(word);
+  play = (word) => {
+    let checkedWord = this.scorer.checkForValidWord(word);
     if (this.hasWon()) {
       return false;
     } else {
@@ -39,14 +31,14 @@ class Player {
     }
   }
 
-  highestScoringWord() {
-    return Scoring.highestScoreFrom(this.plays);
+  highestScoringWord = () => {
+    return this.scorer.highestScoreFrom(this.plays);
   }
 
   highestWordScore() {
     let highestWord = this.highestScoringWord();
 
-    return Scoring.score(highestWord);
+    return this.scorer.score(highestWord);
   }
 
 }
