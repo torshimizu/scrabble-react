@@ -140,7 +140,6 @@ class App extends Component {
   // places the tile on the board
   cellClickHandler = (event) => {
     if (this.state.currentInPlayTile && event.target.innerHTML.length === 0) {
-      console.log("I'm here first");
       let currentRow = this.getCellRow(event);
       let currentColumn = this.getCellId(event);
       let updatedBoard = this.state.board
