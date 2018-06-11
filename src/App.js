@@ -24,6 +24,29 @@ const makeArrayOfAllLetters = () => {
   return availableLetters.shuffle();
 }
 
+const createOneRow = () => {
+  let row = []
+  for (let c = 0; c < 15; c += 1) {
+    row.push({
+      active: false,
+      letter: null,
+      
+    });
+  }
+  return row;
+}
+
+const createAllRows = () => {
+  let board = []
+  for (let r = 0; r < 15; r += 1) {
+    board.push(
+
+    );
+  }
+  return board;
+}
+
+
 class App extends Component {
 
   constructor() {
@@ -35,6 +58,7 @@ class App extends Component {
     const p2Tiles = this.drawTiles(allTiles, 7);
 
     this.state = {
+      board:
       allTiles: allTiles,
       player1: {
         player: new Player(),
