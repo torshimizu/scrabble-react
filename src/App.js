@@ -256,17 +256,12 @@ class App extends Component {
     let turnLetters = this.state.turnTiles.map((tile) => {
       return tile.letter;
     })
+    // THIS WORKS
+    turnLetters.forEach((letter) => {
+      playerTiles.splice(playerTiles.indexOf(letter), 1);
+    })
 
-    // loop over turnTiles, if found in playerTiles, don't add it to new array?
-    let updatedPlayerTiles = []
-    // this does not take care of duplicate letters that are not used
-    playerTiles.forEach((tile) => {
-      if (turnLetters.indexOf(tile) === -1 ) {
-        updatedPlayerTiles.push(tile);
-      }
-    });
-
-    console.log(updatedPlayerTiles);
+    console.log(playerTiles);
 
     // make all active tiles inactive
     let updatedBoard = this.state.board;
