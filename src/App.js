@@ -98,6 +98,14 @@ class App extends Component {
     return this.state.player1Current ? "player1" : "player2";
   }
 
+  getCellRow = (event) => {
+    return event.currentTarget.id.replace('row', '');
+  }
+
+  getCellId = (event) => {
+    return event.target.id.replace('cell', '');
+  }
+
   // staging tile for placing on the board
   // will unstage the tile if the same tile is clicked
   onPlayerTileClick = (event) => {
@@ -135,17 +143,22 @@ class App extends Component {
 
   // places the tile on the board
   cellClickHandler = (event) => {
-    if (this.state.currentInPlayTile && event.target.innerHTML === '&nbsp;') {
-      let currentRow = event.currentTarget.id;
-      let currentColumn = event.target.id;
-      let row = [...document.getElementById(currentRow).childNodes];
-      let cell = row.find((c) => {
-        return c.id === currentColumn;
-      });
-      // replace the text inside the selected cell on board
-      cell.innerHTML = this.state.currentInPlayTile;
-      cell.classList.add('active');
+    if (this.state.currentInPlayTile && event.target.innerHTML.length === 0) {
+      let currentRow = this.getCellRow(event);
+      let currentColumn = this.getCellId(event);
+      let updatedBoard = this.state.board
+      updatedBoard[currentRow][currentColumn]['letter'] = this.state.currentInPlayTile;
+      updatedBoard[currentRow][currentColumn]['active'] = true;
 
+
+      // let row = [...document.getElementById(currentRow).childNodes];
+      // let cell = row.find((c) => {
+      //   return c.id === currentColumn;
+      // });
+      // // replace the text inside the selected cell on board
+      // cell.innerHTML = this.state.currentInPlayTile;
+      // cell.classList.add('active');
+      //
       // add tile to turnTiles
       let updatedTurnTiles = this.state.turnTiles;
       let turnTile = {
@@ -154,14 +167,15 @@ class App extends Component {
         letter: this.state.currentInPlayTile
       };
       updatedTurnTiles.push(turnTile);
-
+      //
       this.setState({
+        board: updatedBoard,
         turnTiles: updatedTurnTiles,
         currentInPlayTile: null,
         inPlayTileIndex: null,
       })
 
-      // replace the text of the just played-player's tile to a blank removes the tile from the player's displayed tiles but not from players currentTiles in state
+      // // replace the text of the just played-player's tile to a blank removes the tile from the player's displayed tiles but not from players currentTiles in state
       this.removeLetterFromCurrTiles();
 
     } else if (this.checkIfLetterInCurrPlayersCurrTurn(event)) {
@@ -192,14 +206,16 @@ class App extends Component {
   }
 
   checkIfLetterInCurrPlayersCurrTurn = (event) => {
-    // need to check if the selected cell is active also
-    let matchedTurnPlay = this.state.turnTiles.filter((play) => {
-      return play.row === event.currentTarget.id &&
-       play.column === event.target.id &&
-       play.letter === event.target.innerText;
-    })
+    // checking that the cell is active and matching info
+    if (this.state.board[this.getCellRow(event)][this.getCellId(event)].active) {
+      let matchedTurnPlay = this.state.turnTiles.find((play) => {
+        return play.row === this.getCellRow(event) &&
+         play.column === this.getCellId(event) &&
+         play.letter === event.target.innerText;
+      })
 
-    return matchedTurnPlay.length !== 0;
+      return matchedTurnPlay
+    }
   }
 
 

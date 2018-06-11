@@ -14,7 +14,7 @@ class BoardView extends React.Component {
       return (<div key={index} id={`row${index}`} className='row' onClick={this.cellClickHandler}>
         {
           row.map((cell, index) => {
-            return (<span key={index} id={`cell${index}`} className='cell'>{cell.letter}&nbsp;</span>)
+            return (<span key={index} id={`cell${index}`} className='cell'>{cell.letter}</span>)
           })
         }
 
