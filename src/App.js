@@ -44,6 +44,7 @@ const createAllRows = () => {
   return board;
 }
 
+const MAXTILES = 7;
 
 class App extends Component {
 
@@ -77,9 +78,8 @@ class App extends Component {
 
 
   drawTiles = (allTiles, num) => {
-    const maxTiles = 7;
 
-    if (num > maxTiles) {
+    if (num > MAXTILES) {
       throw new Error('Too many tiles requested');
     }
 
@@ -256,24 +256,36 @@ class App extends Component {
     let turnLetters = this.state.turnTiles.map((tile) => {
       return tile.letter;
     })
-    // THIS WORKS
+
     turnLetters.forEach((letter) => {
       playerTiles.splice(playerTiles.indexOf(letter), 1);
     })
+    // draw more letters
+    let tilesToDraw = MAXTILES - playerTiles.length;
+    let newTiles = this.drawTiles(this.state.allTiles, tilesToDraw);
+    let updatedPlayerTiles = playerTiles.concat(newTiles);
 
-    console.log(playerTiles);
-
-    // make all active tiles inactive
+    // make all active tiles on board inactive
     let updatedBoard = this.state.board;
     this.state.turnTiles.forEach((tile) => {
       updatedBoard[tile.row][tile.column].active = false;
     })
 
-    this.setState({
+    // TODO: update the classList of playerTiles to not have placed-letter
+
+    // update state
+    let newState = {
       board: updatedBoard,
       player1Current: !this.state.player1Current,
-      turnTiles: []
-    });
+      turnTiles: [],
+    }
+
+    let playerObj = {...this.state[this.getCurrentPlayer()]};
+    playerObj.currentTiles = updatedPlayerTiles;
+    newState[this.getCurrentPlayer()] = playerObj;
+    console.log(newState);
+
+    this.setState(newState);
   }
 
   render() {
