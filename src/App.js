@@ -223,9 +223,10 @@ class App extends Component {
   }
 
   orderLetters = () => {
-    let direction = this.state.turnTiles.reduce((a, b) => {   return (a.row === b.row) ? 'row' : 'column'; });
+    let isRow = this.state.turnTiles.every((v) => { return v.row === this.state.turnTiles[0].row });
+
     let sampleTiles = this.state.turnTiles.slice(0);
-    if (direction === 'row') {
+    if (isRow) {
       return sampleTiles.sort((a, b) => {
         return a.column - b.column;
       })
@@ -239,8 +240,16 @@ class App extends Component {
   finishTurnClick = (event) => {
     event.preventDefault();
     // need to add played word to currentPlayer.plays
+    let wordArray = this.orderLetters();
+    let word = wordArray.map((wordObj) => {
+      return wordObj.letter;
+    }).join('');
+    let currentPlayer = this.state[this.getCurrentPlayer()];
+    currentPlayer.player.play(word);
+    console.log(currentPlayer.player.plays);
+
+
     // need to remove all played tiles from player's current tiles
-    console.log(this.orderLetters());
     // make all active tiles inactive
     let updatedBoard = this.state.board;
     this.state.turnTiles.forEach((tile) => {

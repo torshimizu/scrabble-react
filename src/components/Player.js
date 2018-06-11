@@ -1,4 +1,13 @@
 import Scoring from './Scoring';
+const checkForValidWord = (word) => {
+  let downWord = word.toLowerCase()
+
+  if (!downWord.match(/^[a-z]+$/) || downWord.length > 7 || downWord.length < 1) {
+    throw new Error("Invalid Word");
+  } else {
+    return downWord;
+  }
+}
 
 class Player {
   constructor() {
@@ -21,7 +30,7 @@ class Player {
   }
 
   play(word) {
-    let checkedWord = Scoring.checkForValidWord(word);
+    let checkedWord = checkForValidWord(word);
     if (this.hasWon()) {
       return false;
     } else {
