@@ -13,6 +13,7 @@
   height: 30px;
   border: 1px black solid;
   margin: 0.2rem 0.2rem;
+  overflow: hidden;
 }
 
 #row7 > #cell7 {
