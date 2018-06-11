@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BoardView from './components/BoardView';
+import PlayerTiles from './components/PlayerTiles';
 import Player from './components/Player';
 import LETTERS from './components/Letters';
 import './App.css';
@@ -194,7 +195,6 @@ class App extends Component {
   }
 
   checkIfLetterInCurrPlayersCurrTurn = (event) => {
-    console.log("why am I doing this");
     // checking that the cell is active and matching info
     if (this.state.board[this.getCellRow(event)][this.getCellId(event)].active && !this.state.currentInPlayTile) {
       let matchedTurnPlay = this.state.turnTiles.find((play) => {
@@ -222,32 +222,40 @@ class App extends Component {
     });
   }
 
+  orderLetters = () => {
+    let direction = this.state.turnTiles.reduce((a, b) => {   return (a.row === b.row) ? 'row' : 'column'; });
+    let sampleTiles = this.state.turnTiles.slice(0);
+    if (direction === 'row') {
+      return sampleTiles.sort((a, b) => {
+        return a.column - b.column;
+      })
+    } else {
+      return sampleTiles.sort((a, b) => {
+        return a.row - b.row;
+      })
+    }
+  }
 
   finishTurnClick = (event) => {
     event.preventDefault();
     // need to add played word to currentPlayer.plays
     // need to remove all played tiles from player's current tiles
-    console.log(this.state[this.getCurrentPlayer()].player.totalScore());
-
+    console.log(this.orderLetters());
     // make all active tiles inactive
-    let actives = Array.from(document.getElementsByClassName('active'));
-
-    actives.forEach((cell) => {
-      cell.classList.remove('active');
-      cell.classList.add('inactive');
+    let updatedBoard = this.state.board;
+    this.state.turnTiles.forEach((tile) => {
+      updatedBoard[tile.row][tile.column].active = false;
     })
 
     this.setState({
+      board: updatedBoard,
       player1Current: !this.state.player1Current,
       turnTiles: []
     });
   }
 
   render() {
-    let currentPlayer = this.state.player1
-    if (!this.state.player1Current) {
-      currentPlayer = this.state.player2;
-    }
+    let currentPlayer = this.getCurrentPlayer();
 
     return (
       <div className="App">
@@ -255,17 +263,13 @@ class App extends Component {
         <BoardView
           boardCellClick={this.cellClickHandler}
           board={this.state.board}
-          />
-        <div className="player-info">
-          { currentPlayer.name }
-          <p>Tiles:</p>
-          <div id="player-tiles"> {currentPlayer.currentTiles.map((tile, index) => {
-              return <span className='cell' key={index} id={index} onClick={this.onPlayerTileClick}>{tile}</span>
-            })}
-          </div>
-          <button onClick={this.finishTurnClick}>Finish Turn</button>
-
-        </div>
+        />
+        <PlayerTiles
+          tiles={this.state[currentPlayer]['currentTiles']}
+          finishButtonClick={this.finishTurnClick}
+          tileClick={this.onPlayerTileClick}
+          currentPlayer={this.state[currentPlayer]['name']}
+        />
       </div>
     );
   }
