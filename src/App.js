@@ -226,20 +226,21 @@ class App extends Component {
     });
   }
 
+  // what if the word is only two letters (one letter added to one existing)?
   isVerticalOrHorizonal = () => {
     return this.state.turnTiles.every((v) => { return v.row === this.state.turnTiles[0].row });
   }
 
-  orderLetters = () => {
+  orderLetters = (unorderedArr) => {
     let isRow = this.isVerticalOrHorizonal();
 
-    let sampleTiles = this.state.turnTiles.slice(0);
+    // let sampleTiles = this.state.turnTiles.slice(0);
     if (isRow) {
-      return sampleTiles.sort((a, b) => {
+      return unorderedArr.sort((a, b) => {
         return a.column - b.column;
       })
     } else {
-      return sampleTiles.sort((a, b) => {
+      return unorderedArr.sort((a, b) => {
         return a.row - b.row;
       })
     }
@@ -249,11 +250,13 @@ class App extends Component {
   findInBetweenLetter = (sortedArr, direction) => {
     let last = sortedArr.length - 1;
 
+    // TODO: THIS DOESN'T WORK
     for (let i = 0; i < last; i += 1) {
+
       let current = parseInt(sortedArr[i][direction], 10);
       let onePlus = parseInt(sortedArr[i + 1][direction], 10);
 
-      if (current !== (onePlus + 1)) {
+      if ((current + 1) !== onePlus) {
         return current + 1
       } else {
         return null
@@ -262,15 +265,14 @@ class App extends Component {
   }
 
   // this does not check for multiple surrounding tiles (building off of more than one letter)
-  // need to check for in between letters
   checkForSurroundingTiles = (sampleTiles) => {
     let isRow = this.isVerticalOrHorizonal();
     let beforeIndex = null;
     let afterIndex = null;
 
     if (isRow) {
-      beforeIndex = parseInt(sampleTiles[0].column) - 1;
-      afterIndex = parseInt(sampleTiles[sampleTiles.length - 1].column) + 1;
+      beforeIndex = parseInt(sampleTiles[0].column, 10) - 1;
+      afterIndex = parseInt(sampleTiles[sampleTiles.length - 1].column, 10) + 1;
       if (this.state.board[sampleTiles[0].row][beforeIndex].letter) {
         // before
         return {
@@ -293,7 +295,7 @@ class App extends Component {
         return {
           row: sampleTiles[0].row,
           column: inBetweenLetterIndex,
-          letter: this.state.board[parseInt(sampleTiles[0].row)][inBetweenLetterIndex].letter
+          letter: this.state.board[parseInt(sampleTiles[0].row, 10)][inBetweenLetterIndex].letter
         };
 
       } else {
@@ -303,29 +305,46 @@ class App extends Component {
 
     } else { // is a vertical play
       console.log('in column');
-      beforeIndex = parseInt(sampleTiles[0].row) - 1;
-      afterIndex = parseInt(sampleTiles[sampleTiles.length - 1].row) + 1;
+      beforeIndex = parseInt(sampleTiles[0].row, 10) - 1;
+      afterIndex = parseInt(sampleTiles[sampleTiles.length - 1].row, 10) + 1;
 
       if (this.state.board[beforeIndex][sampleTiles[0].column].letter) {
-
-        return this.state.board[beforeIndex][sampleTiles[0].column]
+        // before
+        return {
+          row: beforeIndex,
+          column: sampleTiles[0].column,
+          letter: this.state.board[beforeIndex][sampleTiles[0].column].letter
+        };
 
       } else if (this.state.board[afterIndex][sampleTiles[0].column].letter) {
-
-        return this.state.board[afterIndex][sampleTiles[0].column]
-
+        // after
+        return {
+          row: afterIndex,
+          column: sampleTiles[0].column,
+          letter: this.state.board[afterIndex][sampleTiles[0].column].letter
+        }
+      } else if (this.findInBetweenLetter(sampleTiles, "row")) {
+        let inBetweenLetterIndex = this.findInBetweenLetter(sampleTiles, "row");
+        return {
+          row: inBetweenLetterIndex,
+          column: sampleTiles[0].column,
+          letter: this.state.board[inBetweenLetterIndex][sampleTiles[0].column].letter
+        };
       } else {
         return null
       }
-
     }
   }
 
   makeWordFromTiles = () => {
-    let wordArray = this.orderLetters();
-    // need to check if there is a letter before, after or in between the word
+    let turnTiles = this.state.turnTiles.slice();
+    let wordArray = this.orderLetters(turnTiles);
     let additionalLetter = this.checkForSurroundingTiles(wordArray);
-    console.log(additionalLetter);
+
+    if (additionalLetter) {
+      wordArray.push(additionalLetter);
+      wordArray = this.orderLetters(wordArray);
+    }
 
     return wordArray.map((wordObj) => {
       return wordObj.letter;
@@ -336,6 +355,7 @@ class App extends Component {
     event.preventDefault();
     // add played word to currentPlayer.plays
     let word = this.makeWordFromTiles();
+    console.log(word);
     let currentPlayer = this.state[this.getCurrentPlayer()];
     currentPlayer.player.play(word);
 
