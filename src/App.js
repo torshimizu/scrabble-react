@@ -226,8 +226,12 @@ class App extends Component {
     });
   }
 
+  isVerticalOrHorizonal = () => {
+    return this.state.turnTiles.every((v) => { return v.row === this.state.turnTiles[0].row });
+  }
+
   orderLetters = () => {
-    let isRow = this.state.turnTiles.every((v) => { return v.row === this.state.turnTiles[0].row });
+    let isRow = this.isVerticalOrHorizonal();
 
     let sampleTiles = this.state.turnTiles.slice(0);
     if (isRow) {
@@ -241,8 +245,88 @@ class App extends Component {
     }
   }
 
+  // only works for one letter
+  findInBetweenLetter = (sortedArr, direction) => {
+    let last = sortedArr.length - 1;
+
+    for (let i = 0; i < last; i += 1) {
+      let current = parseInt(sortedArr[i][direction], 10);
+      let onePlus = parseInt(sortedArr[i + 1][direction], 10);
+
+      if (current !== (onePlus + 1)) {
+        return current + 1
+      } else {
+        return null
+      }
+    }
+  }
+
+  // this does not check for multiple surrounding tiles (building off of more than one letter)
+  // need to check for in between letters
+  checkForSurroundingTiles = (sampleTiles) => {
+    let isRow = this.isVerticalOrHorizonal();
+    let beforeIndex = null;
+    let afterIndex = null;
+
+    if (isRow) {
+      beforeIndex = parseInt(sampleTiles[0].column) - 1;
+      afterIndex = parseInt(sampleTiles[sampleTiles.length - 1].column) + 1;
+      if (this.state.board[sampleTiles[0].row][beforeIndex].letter) {
+        // before
+        return {
+          row: sampleTiles[0].row,
+          column: beforeIndex,
+          letter: this.state.board[sampleTiles[0].row][beforeIndex].letter
+        };
+
+      } else if (this.state.board[sampleTiles[0].row][afterIndex].letter) {
+        // after
+        return {
+          row: sampleTiles[0].row,
+          column: afterIndex,
+          letter: this.state.board[sampleTiles[0].row][beforeIndex].letter
+        };
+
+      } else if (this.findInBetweenLetter(sampleTiles, "column")) {
+        // in between
+        let inBetweenLetterIndex = this.findInBetweenLetter(sampleTiles, "column");
+        return {
+          row: sampleTiles[0].row,
+          column: inBetweenLetterIndex,
+          letter: this.state.board[parseInt(sampleTiles[0].row)][inBetweenLetterIndex].letter
+        };
+
+      } else {
+        // return nothing
+        return null
+      }
+
+    } else { // is a vertical play
+      console.log('in column');
+      beforeIndex = parseInt(sampleTiles[0].row) - 1;
+      afterIndex = parseInt(sampleTiles[sampleTiles.length - 1].row) + 1;
+
+      if (this.state.board[beforeIndex][sampleTiles[0].column].letter) {
+
+        return this.state.board[beforeIndex][sampleTiles[0].column]
+
+      } else if (this.state.board[afterIndex][sampleTiles[0].column].letter) {
+
+        return this.state.board[afterIndex][sampleTiles[0].column]
+
+      } else {
+        return null
+      }
+
+    }
+  }
+
   makeWordFromTiles = () => {
     let wordArray = this.orderLetters();
+    // need to check if there is a letter before, after or in between the word
+    let additionalLetter = this.checkForSurroundingTiles(wordArray);
+    console.log(additionalLetter);
+
     return wordArray.map((wordObj) => {
       return wordObj.letter;
     }).join('');
