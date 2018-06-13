@@ -8,11 +8,11 @@ class PlayerTiles extends React.Component {
     tileClick: PropTypes.func,
     finishButtonClick: PropTypes.func,
     selectedIndex: PropTypes.number,
-    currentTileIndexes: PropTypes.arrayOf(PropTypes.number)
+    currentTileIndices: PropTypes.arrayOf(PropTypes.number)
   }
 
   static defaultProps = {
-    currentTileIndexes: []
+    currentTileIndices: []
   }
 
   onTileClick = (event) => {
@@ -24,14 +24,15 @@ class PlayerTiles extends React.Component {
   }
 
   isCurrentlyPlayed(index) {
-    return this.props.currentTileIndexes.includes(index);
+    return this.props.currentTileIndices.includes(index);
   }
 
   render () {
     return (
       <div className="in-play-tiles">
         <p>Tiles:</p>
-        <div id="player-tiles"> {this.props.tiles.map((tile, index) => {
+        <div id="player-tiles">
+          {this.props.tiles.map((tile, index) => {
             if (this.isCurrentlyPlayed(index)) {
               return null;
             }

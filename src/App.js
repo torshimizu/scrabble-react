@@ -73,7 +73,7 @@ class App extends Component {
       currentInPlayTile: null,
       inPlayTileIndex: null,
       selectedPlayerTileIndex: null,
-      turnTiles: [] // object of letter, row, column of board placement
+      turnTiles: [] // object of letter, row, column of board placement, index from player-tiles
     }
   }
 
@@ -124,22 +124,20 @@ class App extends Component {
         inPlayTileIndex: tileIndex
       });
     }
-
   }
 
-  removeLetterFromCurrTiles = () => {
-    const currentTileIndex = this.state.inPlayTileIndex;
-    const currentTiles = [...document.getElementById("player-tiles").childNodes];
-    let elementToReplace = currentTiles.find((tile) => {
-      return tile.id === currentTileIndex;
-    });
-
-    this.setState({
-      inPlayTileIndex: null
-    })
-
-    // elementToReplace.classList.add("placed-letter");
-  }
+  // PROBABLY NO LONGER NEEDED
+  // removeLetterFromCurrTiles = () => {
+  //   const currentTileIndex = this.state.inPlayTileIndex;
+  //   const currentTiles = [...document.getElementById("player-tiles").childNodes];
+  //   let elementToReplace = currentTiles.find((tile) => {
+  //     return tile.id === currentTileIndex;
+  //   });
+  //
+  //   this.setState({
+  //     inPlayTileIndex: null
+  //   })
+  // }
 
 
   // places the tile on the board
@@ -147,52 +145,45 @@ class App extends Component {
     // ensure that the click was on the SPAN
     if (event.target.nodeName !== 'SPAN') {
       return
+
     } else if (this.state.currentInPlayTile && event.target.innerHTML.length === 0) {
+
       let currentRow = this.getCellRow(event);
       let currentColumn = this.getCellId(event);
-      let updatedBoard = this.state.board
+      let updatedBoard = this.state.board;
       updatedBoard[currentRow][currentColumn]['letter'] = this.state.currentInPlayTile;
       updatedBoard[currentRow][currentColumn]['active'] = true;
 
-      let updatedTurnTiles = this.state.turnTiles;
+      let updatedTurnTiles = Array.from(this.state.turnTiles);
       let turnTile = {
         row: currentRow,
         column: currentColumn,
-        letter: this.state.currentInPlayTile
+        letter: this.state.currentInPlayTile,
+        index: this.state.inPlayTileIndex,
       };
       updatedTurnTiles.push(turnTile);
-      //
+
       this.setState({
         board: updatedBoard,
         turnTiles: updatedTurnTiles,
         currentInPlayTile: null,
         inPlayTileIndex: null,
-      })
-
-      // removing selected-letter class, adding placed-letter
-      this.removeLetterFromCurrTiles();
+      });
 
     } else if (this.checkIfLetterInCurrPlayersCurrTurn(event)) {
       let currentLetter = event.target.innerText;
-
       // add tile back to player's current tiles
-      let hiddenTiles = Array.from(document.getElementsByClassName("placed-letter"));
-      let targetTile = hiddenTiles.find((tile) => {
-        return tile.innerText === event.target.innerText;
+      // by creating a turnTiles array without the letter
+      let updatedTurnTiles = Array.from(this.state.turnTiles);
+      updatedTurnTiles = updatedTurnTiles.filter((tile) => {
+        return tile.letter !== currentLetter;
       });
-      targetTile.classList.remove("placed-letter");
-
-      // creating a turnTiles array without the letter
-      let updatedTurnTiles = this.state.turnTiles;
-      updatedTurnTiles.splice( updatedTurnTiles.indexOf(currentLetter), 1 );
 
       // create a board without the selected letter
       let updatedBoard = this.state.board;
       updatedBoard[this.getCellRow(event)][this.getCellId(event)].letter = null;
       updatedBoard[this.getCellRow(event)][this.getCellId(event)].active = false;
 
-      // remove tiles from state turnTiles
-      // make board cell blank
       this.setState({
         board: updatedBoard,
         turnTiles: updatedTurnTiles,
@@ -401,8 +392,8 @@ class App extends Component {
     this.setState(newState);
   }
 
-  getCurrentTileIndexes() {
-    return []
+  getCurrentTileIndices() {
+    return this.state.turnTiles.map((tile) => { return tile.index });
   }
 
   render() {
@@ -429,7 +420,7 @@ class App extends Component {
         </div>
 
         <PlayerTiles
-          currentTileIndexes={this.getCurrentTileIndexes()}
+          currentTileIndices={this.getCurrentTileIndices()}
           selectedIndex={this.state.inPlayTileIndex}
           tiles={this.state[currentPlayer]['currentTiles']}
           finishButtonClick={this.finishTurnClick}
