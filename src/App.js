@@ -109,6 +109,19 @@ class App extends Component {
     return event.target.id.replace('cell', '');
   }
 
+  shuffleTiles = () => {
+    let updatedTiles = Array.from(this.state[this.getCurrentPlayer()].currentTiles);
+    updatedTiles.shuffle();
+
+    let playerState = {...this.state[this.getCurrentPlayer()]};
+    playerState.currentTiles = updatedTiles;
+
+    let newState = {}
+    newState[this.getCurrentPlayer()] = playerState;
+
+    this.setState(newState);
+  }
+
   // staging tile for placing on the board
   // will unstage the tile if the same tile is clicked
   onPlayerTileClick = (event) => {
@@ -126,20 +139,6 @@ class App extends Component {
     }
   }
 
-  // PROBABLY NO LONGER NEEDED
-  // removeLetterFromCurrTiles = () => {
-  //   const currentTileIndex = this.state.inPlayTileIndex;
-  //   const currentTiles = [...document.getElementById("player-tiles").childNodes];
-  //   let elementToReplace = currentTiles.find((tile) => {
-  //     return tile.id === currentTileIndex;
-  //   });
-  //
-  //   this.setState({
-  //     inPlayTileIndex: null
-  //   })
-  // }
-
-
   // places the tile on the board
   cellClickHandler = (event) => {
     // ensure that the click was on the SPAN
@@ -147,7 +146,7 @@ class App extends Component {
       return
 
     } else if (this.state.currentInPlayTile && event.target.innerHTML.length === 0) {
-
+      // placing the tile on the board
       let currentRow = this.getCellRow(event);
       let currentColumn = this.getCellId(event);
       let updatedBoard = this.state.board;
@@ -171,15 +170,13 @@ class App extends Component {
       });
 
     } else if (this.checkIfLetterInCurrPlayersCurrTurn(event)) {
+      // recalling the tile
       let currentLetter = event.target.innerText;
-      // add tile back to player's current tiles
-      // by creating a turnTiles array without the letter
       let updatedTurnTiles = Array.from(this.state.turnTiles);
       updatedTurnTiles = updatedTurnTiles.filter((tile) => {
         return tile.letter !== currentLetter;
       });
 
-      // create a board without the selected letter
       let updatedBoard = this.state.board;
       updatedBoard[this.getCellRow(event)][this.getCellId(event)].letter = null;
       updatedBoard[this.getCellRow(event)][this.getCellId(event)].active = false;
@@ -205,21 +202,6 @@ class App extends Component {
     }
   }
 
-
-  // need to update this function to remove all played tiles once turn is finished
-  removePlayedTilesFromPlayer = () => {
-    let currentPlayer = this.getCurrentPlayer();
-    let updatedTiles = this.state[currentPlayer].currentTiles.splice(this.state.inPlayTileIndex, 1, ' ');
-
-    this.setState({
-      currentPlayer: {
-        player: this.state[currentPlayer].player,
-        currentTiles: updatedTiles,
-        name: this.state[currentPlayer].name
-      }
-    });
-  }
-
   // what if the word is only two letters (one letter added to one existing)?
   isVerticalOrHorizonal = () => {
     return this.state.turnTiles.every((v) => { return v.row === this.state.turnTiles[0].row });
@@ -228,7 +210,6 @@ class App extends Component {
   orderLetters = (unorderedArr) => {
     let isRow = this.isVerticalOrHorizonal();
 
-    // let sampleTiles = this.state.turnTiles.slice(0);
     if (isRow) {
       return unorderedArr.sort((a, b) => {
         return a.column - b.column;
@@ -244,7 +225,6 @@ class App extends Component {
   findInBetweenLetter = (sortedArr, direction) => {
     let last = sortedArr.length - 1;
 
-    // TODO: THIS DOESN'T WORK
     for (let i = 0; i < last; i += 1) {
 
       let current = parseInt(sortedArr[i][direction], 10);
@@ -406,7 +386,8 @@ class App extends Component {
           boardCellClick={this.cellClickHandler}
           board={this.state.board}
         />
-      <div className='player-info'>
+
+        <div className='player-info'>
           <h3>Player 1 Score: </h3>
           <p>
             {this.state.player1.player.totalScore()}
@@ -415,15 +396,14 @@ class App extends Component {
           <p>
             {this.state.player2.player.totalScore()}
           </p>
-
-
         </div>
 
         <PlayerTiles
           currentTileIndices={this.getCurrentTileIndices()}
           selectedIndex={this.state.inPlayTileIndex}
           tiles={this.state[currentPlayer]['currentTiles']}
-          finishButtonClick={this.finishTurnClick}
+          finishTurnCallback={this.finishTurnClick}
+          shuffleTilesCallback={this.shuffleTiles}
           tileClick={this.onPlayerTileClick}
           currentPlayer={this.state[currentPlayer]['name']}
         />

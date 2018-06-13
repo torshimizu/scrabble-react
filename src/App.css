@@ -22,6 +22,21 @@
 .in-play-tiles {
   grid-row-start: 3;
   grid-column: 1;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+}
+
+.tray {
+  grid-column-start: 2;
+}
+
+.shuffle-tiles {
+  grid-column-start: 3;
+  /*align-self: center;*/
+}
+
+.shuffle-tiles > button {
+  margin-top: 8vh;
 }
 
 .player-info {
