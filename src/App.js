@@ -72,6 +72,7 @@ class App extends Component {
       player1Current: true,
       currentInPlayTile: null,
       inPlayTileIndex: null,
+      selectedPlayerTileIndex: null,
       turnTiles: [] // object of letter, row, column of board placement
     }
   }
@@ -111,17 +112,16 @@ class App extends Component {
   // staging tile for placing on the board
   // will unstage the tile if the same tile is clicked
   onPlayerTileClick = (event) => {
-    if (event.target.id === this.state.inPlayTileIndex) {
-      event.target.classList.remove("selected-letter");
+    const tileIndex = parseInt(event.target.id, 10);
+    if (tileIndex === this.state.inPlayTileIndex) {
       this.setState({
         currentInPlayTile: null,
         inPlayTileIndex: null
       });
     } else {
-      event.target.classList.add("selected-letter");
       this.setState({
         currentInPlayTile: event.target.innerText,
-        inPlayTileIndex: event.target.id
+        inPlayTileIndex: tileIndex
       });
     }
 
@@ -134,8 +134,11 @@ class App extends Component {
       return tile.id === currentTileIndex;
     });
 
-    elementToReplace.classList.remove("selected-letter");
-    elementToReplace.classList.add("placed-letter");
+    this.setState({
+      inPlayTileIndex: null
+    })
+
+    // elementToReplace.classList.add("placed-letter");
   }
 
 
@@ -304,7 +307,6 @@ class App extends Component {
       }
 
     } else { // is a vertical play
-      console.log('in column');
       beforeIndex = parseInt(sampleTiles[0].row, 10) - 1;
       afterIndex = parseInt(sampleTiles[sampleTiles.length - 1].row, 10) + 1;
 
@@ -399,6 +401,10 @@ class App extends Component {
     this.setState(newState);
   }
 
+  getCurrentTileIndexes() {
+    return []
+  }
+
   render() {
     let currentPlayer = this.getCurrentPlayer();
 
@@ -410,11 +416,21 @@ class App extends Component {
           board={this.state.board}
         />
       <div className='player-info'>
-          <h3>{this.state[currentPlayer].name}</h3>
-          <p>Current Score: {this.state[currentPlayer].player.totalScore()}</p>
+          <h3>Player 1 Score: </h3>
+          <p>
+            {this.state.player1.player.totalScore()}
+          </p>
+          <h3>Player 2 Score: </h3>
+          <p>
+            {this.state.player2.player.totalScore()}
+          </p>
+
 
         </div>
+
         <PlayerTiles
+          currentTileIndexes={this.getCurrentTileIndexes()}
+          selectedIndex={this.state.inPlayTileIndex}
           tiles={this.state[currentPlayer]['currentTiles']}
           finishButtonClick={this.finishTurnClick}
           tileClick={this.onPlayerTileClick}
